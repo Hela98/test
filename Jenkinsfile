@@ -29,7 +29,7 @@ pipeline {
       }
       stage('Build Maven Image') {
         steps {
-          docker.build("${registry}")
+          docker.build("maven-build")
         } 
       }
       stage('Run Maven Container') {
