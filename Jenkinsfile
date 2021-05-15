@@ -18,14 +18,42 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh './gradlew test'
+		    script {
+			    try {
+                		sh './gradlew test'
+			    }
+			    catch(e) {
+				    ech 'Oups ! Error catched on test stage '
+			    }
+		    }
             }
         }
-        stage('Build Docker image') {
+	    stage('Build Maven Image') {
+        docker.build("${registry}")
+   }
+   
+   stage('Run Maven Container') {
+       
+        //Remove maven-build-container if it exisits
+        sh " docker rm -f maven-build-container"
+        
+        //Run maven image
+        sh "docker run --rm --name maven-build-container maven-build"
+   }
+   
+   stage('Deploy Spring Boot Application') {
+        
+         //Remove maven-build-container if it exisits
+        sh " docker rm -f java-deploy-container"
+       
+        sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 ${registry}"
+   }
+
+        /*stage('Build Docker image') {
             steps {
                 sh './gradlew docker'
             }
-        }
+        }*/
         stage('Push Docker image') {
       steps{
         echo "into deploy"
