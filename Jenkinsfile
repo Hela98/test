@@ -2,7 +2,7 @@ pipeline {
    agent any
    environment {
       usernameDocker = "khouuloud"
-		registry = "khouuloud/flaskex-images"
+		registry = "khouuloud/springtest"
 		registryCredentials = 'django'
 		app=''
   }
@@ -30,7 +30,7 @@ pipeline {
             //Remove maven-build-container if it exisits
            sh " docker rm -f java-deploy-container"
 
-           sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 $(registry)"
+           sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 khouuloud/springtest"
       }
    }
 }
