@@ -13,24 +13,31 @@ pipeline {
     
    }
       stage('Build Maven Image') {
-           docker.build("maven-build")
+	      steps {
+		      script {
+			      
+           			docker.build("maven-build")
+		      }
+	      }
       }
 
       stage('Run Maven Container') {
+	      steps {
+		   //Remove maven-build-container if it exisits
+		   sh " docker rm -f maven-build-container"
 
-           //Remove maven-build-container if it exisits
-           sh " docker rm -f maven-build-container"
-
-           //Run maven image
-           sh "docker run --rm --name maven-build-container maven-build"
+		   //Run maven image
+		   sh "docker run --rm --name maven-build-container maven-build"
+	      }
       }
 
       stage('Deploy Spring Boot Application') {
+	      steps {
+		    //Remove maven-build-container if it exisits
+		   sh " docker rm -f java-deploy-container"
 
-            //Remove maven-build-container if it exisits
-           sh " docker rm -f java-deploy-container"
-
-           sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 khouuloud/springtest"
+		   sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 khouuloud/springtest"
+	      }
       }
    }
 }
