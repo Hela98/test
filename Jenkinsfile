@@ -8,9 +8,11 @@ pipeline {
   }
    stages {
       stage('Clone Repository') {
-        // Get some code from a GitHub repository
-        git 'https://github.com/khouloudKE/test.git'
-    
+	      steps {
+		// Get some code from a GitHub repository
+		git 'https://github.com/khouloudKE/test.git'
+	      }
+
    }
       stage('Build Maven Image') {
 	      steps {
